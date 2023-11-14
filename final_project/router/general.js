@@ -22,16 +22,16 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/books',function (req, res) {
-    
+    const bookList = JSON.stringify({books},null,4);
     const getBooks = new Promise((resolve, reject) => {
         setTimeout(() => {
-            res.header('Content-Type', 'application/json');
-            resolve(res.send(JSON.stringify({books},null,4)));
+            resolve(bookList);
         }, 2000);
     });
 
     getBooks.then((successMessage) => {
-        console.log("From Callback " + successMessage)
+        res.header('Content-Type', 'application/json');
+        res.status(200).json({ success: true, message: 'Data loaded successfully', data: successMessage });
     });
 
 });
@@ -40,13 +40,21 @@ public_users.get('/books',function (req, res) {
 public_users.get('/isbn/:isbn',function (req, res) {
     const isbn = req.params.isbn;
     const book = books[isbn];
+    const getIsbn = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if(book) {
+                resolve(book);
+            }
+            else {
+                reject(res.status(404).json({message:"book not found"}));
+            }
+        }, 2000)
+    })
 
-    if(book) {
-        res.send(book);
-    }
-    else {
-        res.status(404).json({message:"book not found"});
-    }
+    getIsbn.then((successMessage) => {
+        res.header('Content-Type', 'application/json');
+        res.status(200).json({ success: true, message: 'Data loaded successfully', data: successMessage });
+    });
  });
   
 // Get book details based on author
