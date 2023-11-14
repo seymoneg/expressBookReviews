@@ -22,7 +22,18 @@ public_users.post("/register", (req,res) => {
 
 // Get the book list available in the shop
 public_users.get('/books',function (req, res) {
-    res.send(JSON.stringify(books,null,4));
+    
+    const getBooks = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            res.header('Content-Type', 'application/json');
+            resolve(res.send(JSON.stringify({books},null,4)));
+        }, 2000);
+    });
+
+    getBooks.then((successMessage) => {
+        console.log("From Callback " + successMessage)
+    });
+
 });
 
 // Get book details based on ISBN
