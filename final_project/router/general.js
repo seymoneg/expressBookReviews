@@ -49,7 +49,7 @@ public_users.get('/isbn/:isbn',function (req, res) {
                 reject(res.status(404).json({message:"book not found"}));
             }
         }, 2000)
-    })
+    });
 
     getIsbn.then((successMessage) => {
         res.header('Content-Type', 'application/json');
@@ -61,28 +61,49 @@ public_users.get('/isbn/:isbn',function (req, res) {
 public_users.get('/author/:author',function (req, res) {
     let booksbyauthor = [];
     let isbns = Object.keys(books);
-    isbns.forEach((isbn) => {
-        if(books[isbn]["author"] === req.params.author) {
-        booksbyauthor.push({"isbn":isbn,
-                            "title":books[isbn]["title"],
-                            "reviews":books[isbn]["reviews"]});
-        }
+    // const jsonBooks = JSON.stringify({booksbyauthor}, null, 4);
+
+    const getBookDeets = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            isbns.forEach((isbn) => {
+                if(books[isbn]["author"] === req.params.author) {
+                    booksbyauthor.push({"isbn":isbn,
+                        "title":books[isbn]["title"],
+                        "reviews":books[isbn]["reviews"]
+                });
+                }
+            });
+            resolve(booksbyauthor);
+        }, 2000)
+    }); 
+
+    getBookDeets.then((successMessage) => {
+        res.header('Content-Type', 'application/json');
+        res.status(200).json({ success: true, message: 'Data loaded successfully', data: successMessage });
     });
-    res.send(JSON.stringify({booksbyauthor}, null, 4));
 });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
     let booktitles = [];
     let isbns = Object.keys(books);
-    isbns.forEach((isbn) => {
-        if(books[isbn]["title"] === req.params.title) {
-        booktitles.push({"isbn":isbn,
+    const getBookTitles = new Promise((resolve, reject) => {
+        setTimeout(() => {
+            isbns.forEach((isbn) => {
+                if(books[isbn]["title"] === req.params.title) {
+                    booktitles.push({"isbn":isbn,
                         "author":books[isbn]["author"],
                         "reviews":books[isbn]["reviews"]});
-        }
+                }
+            });
+            resolve(booktitles);
+        }, 2000)
     });
-    res.send(JSON.stringify({booktitles}, null, 4));
+
+    getBookTitles.then((successMessage) => {
+        res.header('Content-Type', 'application/json');
+        res.status(200).json({ success: true, message: 'Data loaded successfully', data: successMessage });
+    });
 });
 
 //  Get book review
